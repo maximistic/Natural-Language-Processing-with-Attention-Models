@@ -37,3 +37,32 @@ def alignment(encoder_states, decoder_state):
     assert scores.shape == (input_length, 1)
     
     return scores
+
+def attention(encoder_states, decoder_state):
+    """ Example function that calculates attention, returns the context vector 
+    
+        Arguments:
+        encoder_vectors: NxM numpy array, where N is the number of vectors and M is the vector length
+        decoder_vector: 1xM numpy array, M is the vector length, much be the same M as encoder_vectors
+    """ 
+    
+    # First, calculate the alignment scores
+    scores = alignment(encoder_states, decoder_state)
+    
+    # Then take the softmax of the alignment scores to get a weight distribution
+    weights = softmax(scores, axis=0)
+    
+    # Multiply each encoder state by its respective weight
+    weighted_scores = encoder_states * weights
+    
+    # Sum up weighted alignment vectors to get the context vector and return it
+    context = np.sum(weighted_scores, axis=0)
+    return context
+
+# Run this to test your alignment function
+scores = alignment(encoder_states, decoder_state)
+print("Alignment Scores:\n", scores)
+
+# Run this to test your attention function
+context_vector = attention(encoder_states, decoder_state)
+print("Context Vector:\n", context_vector)
