@@ -78,3 +78,16 @@ ax.set_xticks(np.arange(alignment.shape[1]))
 ax.set_xticklabels(sentence_en.split(" "), rotation=90, size=16);
 ax.set_yticks(np.arange(alignment.shape[0]));
 ax.set_yticklabels(sentence_fr.split(" "), size=16);
+
+def attention_qkv(queries, keys, values):
+    """ Calculate scaled dot-product attention from queries, keys, and values matrices """
+    
+    weights = calculate_weights(queries, keys)
+    return np.matmul(weights, values)
+
+
+attention_qkv_result = attention_qkv(embedded_fr, embedded_en, embedded_en)
+
+print(f"The shape of the attention_qkv function is {attention_qkv_result.shape}")
+print(f"Some elements of the attention_qkv function are \n{attention_qkv_result[0:2,:10]}")
+
