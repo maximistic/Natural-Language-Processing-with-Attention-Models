@@ -110,3 +110,13 @@ def bleu_score(candidate, reference):
     BP = brevity_penalty(candidate, reference)    
     geometric_average_precision = average_clipped_precision(candidate, reference)    
     return BP * geometric_average_precision
+
+result_candidate_1 = round(bleu_score(tokenized_cand_1, tokenized_ref) * 100, 1)
+print(f"BLEU score of reference versus candidate 1: {result_candidate_1}")
+result_candidate_2 = round(bleu_score(tokenized_cand_2, tokenized_ref) * 100, 1)
+print(f"BLEU score of reference versus candidate 2: {result_candidate_2}")
+
+result_candidate_1 = round(sacrebleu.sentence_bleu(candidate_1, [reference]).score, 1)
+print(f"BLEU score of reference versus candidate 1: {result_candidate_1}")
+result_candidate_2 = round(sacrebleu.sentence_bleu(candidate_2, [reference]).score, 1)
+print(f"BLEU score of reference versus candidate 2: {result_candidate_2}")
