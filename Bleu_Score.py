@@ -54,3 +54,59 @@ print(f"{candidate_1} -> {tokenized_cand_1}")
 print("\n")
 print(f"{candidate_2} -> {tokenized_cand_2}")
 
+def brevity_penalty(candidate, reference):
+    """
+    Calculates the brevity penalty given the candidate and reference sentences.
+    """
+    reference_length = len(reference)
+    candidate_length = len(candidate)
+
+    if reference_length < candidate_length:
+        BP = 1
+    else:
+        penalty = 1 - (reference_length / candidate_length)
+        BP = np.exp(penalty)
+
+    return BP
+
+def average_clipped_precision(candidate, reference):
+    """
+    Calculates the precision given the candidate and reference sentences.
+    """
+
+    clipped_precision_score = []
+    
+    # Loop through values 1, 2, 3, 4. This is the length of n-grams
+    for n_gram_length in range(1, 5):
+        reference_n_gram_counts = Counter(ngrams(reference, n_gram_length))        
+        candidate_n_gram_counts = Counter(ngrams(candidate, n_gram_length))                
+
+        total_candidate_ngrams = sum(candidate_n_gram_counts.values())       
+        
+        for ngram in candidate_n_gram_counts: 
+            # check if it is in the reference n-gram
+            if ngram in reference_n_gram_counts:
+                # if the count of the candidate n-gram is bigger than the corresponding
+                # count in the reference n-gram, then set the count of the candidate n-gram 
+                # to be equal to the reference n-gram
+                
+                if candidate_n_gram_counts[ngram] > reference_n_gram_counts[ngram]: 
+                    candidate_n_gram_counts[ngram] = reference_n_gram_counts[ngram] # t
+                                                   
+            else:
+                candidate_n_gram_counts[ngram] = 0 # else set the candidate n-gram equal to zero
+
+        clipped_candidate_ngrams = sum(candidate_n_gram_counts.values())
+        
+        clipped_precision_score.append(clipped_candidate_ngrams / total_candidate_ngrams)
+    
+    # Calculate the geometric average: take the mean of elemntwise log, then exponentiate
+    # This is equivalent to taking the n-th root of the product as shown in equation (1) above
+    s = np.exp(np.mean(np.log(clipped_precision_score)))
+    
+    return s
+
+def bleu_score(candidate, reference):
+    BP = brevity_penalty(candidate, reference)    
+    geometric_average_precision = average_clipped_precision(candidate, reference)    
+    return BP * geometric_average_precision
