@@ -120,3 +120,23 @@ result_candidate_1 = round(sacrebleu.sentence_bleu(candidate_1, [reference]).sco
 print(f"BLEU score of reference versus candidate 1: {result_candidate_1}")
 result_candidate_2 = round(sacrebleu.sentence_bleu(candidate_2, [reference]).score, 1)
 print(f"BLEU score of reference versus candidate 2: {result_candidate_2}")
+
+# Loading the raw data
+wmt19_src = open("data/wmt19_src.txt", "r")
+wmt19_src_1 = wmt19_src.read()
+wmt19_src.close()
+
+wmt19_ref = open("data/wmt19_ref.txt", "r")
+wmt19_ref_1 = wmt19_ref.read()
+wmt19_ref.close()
+
+wmt19_can = open("data/wmt19_can.txt", "r")
+wmt19_can_1 = wmt19_can.read()
+wmt19_can.close()
+
+tokenized_corpus_src = nltk.word_tokenize(wmt19_src_1.lower())
+tokenized_corpus_ref = nltk.word_tokenize(wmt19_ref_1.lower())
+tokenized_corpus_cand = nltk.word_tokenize(wmt19_can_1.lower())
+
+result =  round(sacrebleu.sentence_bleu(wmt19_can_1, [wmt19_ref_1]).score, 1)
+print(f"BLEU score of the reference versus candidate translation: {result}")
